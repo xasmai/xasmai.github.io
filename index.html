@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="XasmAI — Sıfırdan, bağımlılıksız C++20 neural network ve CUDA GPT eğitim motoru. PyTorch yok, TensorFlow yok. Sadece cuBLAS, elle yazılmış CUDA kernel'ları ve modern C++." />
+<title>XasmAI — Sıfırdan CUDA GPT Eğitim Motoru</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark">⌬</span>
+      <span class="brand-name">Xasm<span class="accent">AI</span></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#features">Özellikler</a>
+      <a href="#architecture">Mimari</a>
+      <a href="#models">Modeller</a>
+      <a href="#quickstart">Başlangıç</a>
+      <a href="#roadmap">Yol Haritası</a>
+    </nav>
+    <a class="btn btn-ghost" href="#download">İndir <span aria-hidden="true">→</span></a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-badge reveal">
+        <span class="dot"></span> v1.0 — RTX 50xx Blackwell desteği
+      </div>
+
+      <h1 class="hero-title reveal">
+        Sıfırdan yazılmış
+        <span class="grad">CUDA GPT</span>
+        eğitim motoru.
+      </h1>
+
+      <p class="hero-sub reveal">
+        PyTorch yok. TensorFlow yok. Sadece <strong>cuBLAS</strong>, elle yazılmış
+        <strong>CUDA kernel'ları</strong> ve modern <strong>C++20</strong>.
+        5070 Ti üstünde 400M parametreye kadar tam GPT eğitimi.
+      </p>
+
+      <div class="hero-cta reveal">
+        <a class="btn btn-primary" href="#quickstart">
+          Hızlı Başlangıç
+          <span aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn-outline" href="#architecture">
+          <span aria-hidden="true">▮</span> Mimariyi gör
+        </a>
+      </div>
+
+      <div class="hero-stats reveal">
+        <div class="stat">
+          <div class="stat-num" data-count="0">0</div>
+          <div class="stat-label">Python bağımlılığı</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" data-count="400">0</div>
+          <div class="stat-label">M parametre (XL preset)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" data-count="100">0</div>
+          <div class="stat-label">% C++ / CUDA</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" data-count="6">0</div>
+          <div class="stat-label">Hazır model boyutu</div>
+        </div>
+      </div>
+
+      <!-- ASCII -->
+      <pre class="ascii reveal" aria-hidden="true">
+██╗  ██╗ █████╗ ███████╗███╗   ███╗     █████╗ ██╗
+╚██╗██╔╝██╔══██╗██╔════╝████╗ ████║    ██╔══██╗██║
+ ╚███╔╝ ███████║███████╗██╔████╔██║    ███████║██║
+ ██╔██╗ ██╔══██║╚════██║██║╚██╔╝██║    ██╔══██║██║
+██╔╝ ██╗██║  ██║███████║██║ ╚═╝ ██║    ██║  ██║██║
+╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═╝</pre>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>RMSNorm</span><span>·</span>
+      <span>RoPE</span><span>·</span>
+      <span>SwiGLU FFN</span><span>·</span>
+      <span>Causal Self-Attention</span><span>·</span>
+      <span>AdamW</span><span>·</span>
+      <span>Cosine LR</span><span>·</span>
+      <span>Gradient Clipping</span><span>·</span>
+      <span>Top-k / Top-p</span><span>·</span>
+      <span>TF32 Tensor Cores</span><span>·</span>
+      <span>Weight Tying</span><span>·</span>
+      <span>BPE Tokenizer</span><span>·</span>
+      <span>Checkpoint I/O</span><span>·</span>
+
+      <span>RMSNorm</span><span>·</span>
+      <span>RoPE</span><span>·</span>
+      <span>SwiGLU FFN</span><span>·</span>
+      <span>Causal Self-Attention</span><span>·</span>
+      <span>AdamW</span><span>·</span>
+      <span>Cosine LR</span><span>·</span>
+      <span>Gradient Clipping</span><span>·</span>
+      <span>Top-k / Top-p</span><span>·</span>
+      <span>TF32 Tensor Cores</span><span>·</span>
+      <span>Weight Tying</span><span>·</span>
+      <span>BPE Tokenizer</span><span>·</span>
+      <span>Checkpoint I/O</span><span>·</span>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features" class="section">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="kicker">Ne var içinde</span>
+        <h2>Header-only CPU çekirdeği,<br/>elle yazılmış GPU motoru.</h2>
+        <p class="lead">
+          XasmAI iki katmanlıdır: <em>okumak ve öğrenmek için</em> tasarlanmış,
+          tamamen header-only bir C++20 CPU çekirdeği — ve <em>5070 Ti'yi sınıra çekmek için</em>
+          optimize edilmiş, native CUDA tabanlı bir GPT eğitim motoru.
+        </p>
+      </header>
+
+      <div class="grid grid-2">
+        <article class="card reveal">
+          <header class="card-head">
+            <span class="card-icon">▮</span>
+            <h3>CPU çekirdeği</h3>
+            <span class="card-tag">header-only</span>
+          </header>
+          <p class="muted">
+            Tek <code>#include</code> ile çalışan, bağımlılıksız C++20 kütüphanesi.
+            Eğitim teorisini görerek öğrenmek için ideal.
+          </p>
+          <ul class="check-list">
+            <li>Matris, katman ve aktivasyonlar — ReLU, GELU, SiLU, Tanh, Softmax</li>
+            <li>Loss fonksiyonları — MSE, BCE, Cross-Entropy</li>
+            <li>Optimizer'lar — SGD, Momentum, Adam</li>
+            <li>LSTM, Attention, Transformer blokları</li>
+            <li>BPE tokenizer (saf C++)</li>
+          </ul>
+        </article>
+
+        <article class="card glow reveal">
+          <header class="card-head">
+            <span class="card-icon">⚡</span>
+            <h3>CUDA GPT motoru</h3>
+            <span class="card-tag accent">native</span>
+          </header>
+          <p class="muted">
+            Modern GPT mimarisi, üretim kalitesinde optimizasyonlar — hepsi
+            elle yazılmış kernel'lar ve cuBLAS üstünde.
+          </p>
+          <ul class="check-list">
+            <li>RMSNorm + RoPE + SwiGLU FFN + causal self-attention</li>
+            <li>AdamW + cosine LR schedule + warmup</li>
+            <li>Gradient clipping (global L2 norm)</li>
+            <li>Top-k / top-p sampling</li>
+            <li>TF32 tensor core matmul (cuBLAS)</li>
+            <li>Weight tying — input/output embedding</li>
+            <li>Checkpoint kaydet/yükle + SIGINT ile güvenli kapanış</li>
+            <li>Pre-allocated workspace — per-step allocation yok</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section id="architecture" class="section section-dark">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="kicker">Mimari</span>
+        <h2>Modern transformer, açık kodda.</h2>
+        <p class="lead">
+          Her blok, kara kutu değil. Her satır, okunabilir.
+          Aşağıdaki forward path tek bir CUDA dosyasında bulunur.
+        </p>
+      </header>
+
+      <div class="arch-grid">
+        <div class="arch-block reveal">
+          <span class="arch-step">01</span>
+          <h4>Token + Position</h4>
+          <p>Embedding tablosu, RoPE ile pozisyonel rotasyon. Weight tying'le çıkışla paylaşılır.</p>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">→</div>
+        <div class="arch-block reveal">
+          <span class="arch-step">02</span>
+          <h4>RMSNorm</h4>
+          <p>LayerNorm yerine RMSNorm — daha hızlı, modern LLM standardı.</p>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">→</div>
+        <div class="arch-block reveal">
+          <span class="arch-step">03</span>
+          <h4>Causal Attention</h4>
+          <p>Multi-head causal self-attention. Q/K/V projection cuBLAS, mask elle yazılmış kernel.</p>
+        </div>
+        <div class="arch-arrow arch-arrow-down" aria-hidden="true">↓</div>
+        <div class="arch-block reveal">
+          <span class="arch-step">04</span>
+          <h4>SwiGLU FFN</h4>
+          <p>SiLU(xW₁) ⊙ (xW₂) · W₃ — Llama benzeri gated MLP, ReLU yerine.</p>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">→</div>
+        <div class="arch-block reveal">
+          <span class="arch-step">05</span>
+          <h4>Residual + Norm</h4>
+          <p>Pre-norm residual yapısı — derin ağ için stabil gradyan akışı.</p>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">→</div>
+        <div class="arch-block reveal">
+          <span class="arch-step">06</span>
+          <h4>Logits + Sampling</h4>
+          <p>Temperature, top-k ve top-p ile çeşitlilik kontrolü; tied output projection.</p>
+        </div>
+      </div>
+
+      <div class="arch-foot reveal">
+        <div class="pill">Pre-allocated workspace</div>
+        <div class="pill">Zero per-step alloc</div>
+        <div class="pill">TF32 tensor cores</div>
+        <div class="pill">FP32 master weights</div>
+        <div class="pill">SIGINT-safe shutdown</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODELS -->
+  <section id="models" class="section">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="kicker">Hazır presetler</span>
+        <h2>Tiny'den XL'e — tek komut.</h2>
+        <p class="lead">
+          Wizard'da bir sayı seç, model boyutu otomatik kurulsun. Veya kendin gir.
+        </p>
+      </header>
+
+      <div class="table-wrap reveal">
+        <table class="models">
+          <thead>
+            <tr>
+              <th>Preset</th>
+              <th>dim</th>
+              <th>heads</th>
+              <th>layers</th>
+              <th>Parametre</th>
+              <th>Hedef VRAM</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="preset-badge tiny">Tiny</span></td>
+              <td>128</td><td>4</td><td>4</td>
+              <td><strong>~1M</strong></td>
+              <td>&lt;1 GB</td>
+              <td class="muted">Hızlı deney</td>
+            </tr>
+            <tr>
+              <td><span class="preset-badge small">Small</span></td>
+              <td>256</td><td>8</td><td>6</td>
+              <td><strong>~10M</strong></td>
+              <td>~2 GB</td>
+              <td class="muted">Karakter düzeyi</td>
+            </tr>
+            <tr>
+              <td><span class="preset-badge medium">Medium</span></td>
+              <td>512</td><td>8</td><td>8</td>
+              <td><strong>~50M</strong></td>
+              <td>~6 GB</td>
+              <td class="muted">Domain SLM</td>
+            </tr>
+            <tr>
+              <td><span class="preset-badge large">Large</span></td>
+              <td>768</td><td>12</td><td>12</td>
+              <td><strong>~150M</strong></td>
+              <td>~12 GB</td>
+              <td class="muted">Üretim kalitesi</td>
+            </tr>
+            <tr class="row-accent">
+              <td><span class="preset-badge xl">XL</span></td>
+              <td>1024</td><td>16</td><td>16</td>
+              <td><strong>~400M</strong></td>
+              <td>~15 GB</td>
+              <td class="muted">5070 Ti sınırı</td>
+            </tr>
+            <tr>
+              <td><span class="preset-badge custom">Özel</span></td>
+              <td colspan="5" class="muted">Tüm hiperparametreleri elle gir — dim, heads, layers, ff, seq, lr, steps…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICKSTART -->
+  <section id="quickstart" class="section section-dark">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="kicker">Hızlı başlangıç</span>
+        <h2>İki yol: çift tıkla, ya da CLI.</h2>
+        <p class="lead">
+          Windows + RTX 50xx için derlenmiş <code>gpt_cuda.exe</code> hazırdır.
+          Wizard her şeyi sorar — corpus, model, learning rate, adım sayısı.
+        </p>
+      </header>
+
+      <div class="grid grid-2 reveal">
+        <!-- Terminal: Wizard -->
+        <div class="terminal">
+          <div class="terminal-bar">
+            <span class="dot r"></span>
+            <span class="dot y"></span>
+            <span class="dot g"></span>
+            <span class="terminal-title">XasmAI — interactive wizard</span>
+          </div>
+          <pre class="terminal-body" id="wizard-term"><span class="cmd">$ gpt_cuda.exe</span>
+
+<span class="muted">[XasmAI v1.0 — CUDA 12.x — sm_120]</span>
+
+<span class="prompt">?</span> <span class="q">Mod seç:</span>
+  <span class="hl">▶ 1) Yeni eğit</span>
+    2) Devam et (--resume)
+    3) Sadece metin üret
+
+<span class="prompt">?</span> <span class="q">Corpus dosyası:</span>
+  <span class="hl">▶ corpus.txt    (1.2 KB)</span>
+    data.txt      (1.5 KB)
+
+<span class="prompt">?</span> <span class="q">Model boyutu:</span>
+  <span class="hl">▶ Medium  — dim 512, layers 8 (~50M)</span>
+
+<span class="prompt">?</span> <span class="q">Adım sayısı:</span> <span class="user">100000</span>
+<span class="prompt">?</span> <span class="q">Learning rate:</span> <span class="user">3e-4</span>
+
+<span class="ok">✓</span> Eğitim başlıyor...
+<span class="muted">step    100 | loss 5.812 | lr 3.0e-05 | tok/s 24,118</span>
+<span class="muted">step    500 | loss 4.214 | lr 1.5e-04 | tok/s 24,602</span>
+<span class="muted">step   1000 | loss 3.018 | lr 3.0e-04 | tok/s 24,711</span>
+<span class="cursor">█</span></pre>
+        </div>
+
+        <!-- Terminal: CLI -->
+        <div class="terminal">
+          <div class="terminal-bar">
+            <span class="dot r"></span>
+            <span class="dot y"></span>
+            <span class="dot g"></span>
+            <span class="terminal-title">XasmAI — CLI mode</span>
+          </div>
+<pre class="terminal-body"><span class="cmd">$ ./gpt_cuda.exe corpus.txt \</span>
+<span class="cmd">    --dim 512 --heads 8 --layers 8 \</span>
+<span class="cmd">    --ff 2048 --seq 256 \</span>
+<span class="cmd">    --lr 3e-4 --steps 100000 --warmup 1000 \</span>
+<span class="cmd">    --clip 1.0 --top-k 40 --top-p 0.95 \</span>
+<span class="cmd">    --ckpt my_model</span>
+
+<span class="muted"># devam etmek için:</span>
+<span class="cmd">$ ./gpt_cuda.exe --resume my_model_latest.bin</span>
+
+<span class="muted"># inference modu komutları:</span>
+<span class="muted">  /temp 0.5    sampling sıcaklığı</span>
+<span class="muted">  /len 300     üretim uzunluğu</span>
+<span class="muted">  /q           çıkış</span>
+
+<span class="ok">✓ checkpoint yazıldı: my_model_latest.bin</span></pre>
+        </div>
+      </div>
+
+      <div class="build-grid reveal">
+        <h3 class="build-title">Derleme — GPU mimarisine göre</h3>
+        <div class="build-cards">
+          <div class="build-card">
+            <code class="build-cmd">make gpt_cuda CUDA_ARCH=sm_120</code>
+            <span class="build-tag">RTX 50xx · Blackwell</span>
+          </div>
+          <div class="build-card">
+            <code class="build-cmd">make gpt_cuda CUDA_ARCH=sm_89</code>
+            <span class="build-tag">RTX 40xx · Ada</span>
+          </div>
+          <div class="build-card">
+            <code class="build-cmd">make gpt_cuda CUDA_ARCH=sm_86</code>
+            <span class="build-tag">RTX 30xx · Ampere</span>
+          </div>
+          <div class="build-card">
+            <code class="build-cmd">make gpt_cuda CUDA_ARCH=sm_75</code>
+            <span class="build-tag">RTX 20xx · Turing</span>
+          </div>
+        </div>
+        <p class="muted small">
+          Gereksinimler: CUDA Toolkit 12+, C++20 derleyici, cuBLAS.
+          CPU-only örnekler için: <code>make xor regression agent gan gpt</code>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- USE CASES -->
+  <section class="section">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="kicker">Gerçekçi kullanım</span>
+        <h2>"Mini GPT" değil — domain motorudur.</h2>
+        <p class="lead">
+          Trilyon token pre-train için değil. Asıl güçlü olduğu üç senaryo şunlar.
+        </p>
+      </header>
+
+      <div class="grid grid-3">
+        <article class="usecase reveal">
+          <span class="usecase-num">01</span>
+          <h3>Domain SLM</h3>
+          <p>
+            ERP, kod, log analizi, yapısal görevler için
+            <strong>10M – 200M parametrelik özel model</strong>.
+            Kendi corpus'unla eğit, kendi makinene koy.
+          </p>
+        </article>
+        <article class="usecase reveal">
+          <span class="usecase-num">02</span>
+          <h3>Araştırma & öğrenme</h3>
+          <p>
+            CUDA kernel + transformer matematiğini soyutlamasız,
+            <strong>okunabilir kodda</strong> görmek isteyen herkes için.
+            Black-box yok.
+          </p>
+        </article>
+        <article class="usecase reveal">
+          <span class="usecase-num">03</span>
+          <h3>Fine-tune tabanı</h3>
+          <p>
+            Açık ağırlık loader yol haritasında —
+            <strong>Qwen / Llama / Mistral</strong> ağırlıklarına LoRA fine-tuning
+            yakında.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section id="roadmap" class="section section-dark">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="kicker">Yol haritası</span>
+        <h2>Sırada ne var?</h2>
+        <p class="lead">
+          v1.0 sağlam bir taban. Aşağıdaki adımlar performansı 2-5x artıracak
+          ve XasmAI'yi açık-ağırlık ekosistemine bağlayacak.
+        </p>
+      </header>
+
+      <ol class="roadmap reveal">
+        <li class="roadmap-item">
+          <span class="rm-icon" aria-hidden="true">◐</span>
+          <div>
+            <h4>FP16 / BF16 mixed precision</h4>
+            <p class="muted">Tensor core hızlanması — eğitim 2-3x hızlanır, VRAM yarıya iner.</p>
+          </div>
+        </li>
+        <li class="roadmap-item">
+          <span class="rm-icon" aria-hidden="true">◑</span>
+          <div>
+            <h4>KV-cache'li inference</h4>
+            <p class="muted">Uzun metin üretiminde her token sabit zamanda — generation 5-10x daha hızlı.</p>
+          </div>
+        </li>
+        <li class="roadmap-item">
+          <span class="rm-icon" aria-hidden="true">◒</span>
+          <div>
+            <h4>Gradient accumulation</h4>
+            <p class="muted">Tek GPU'da büyük effective batch size — daha stabil eğitim sinyali.</p>
+          </div>
+        </li>
+        <li class="roadmap-item">
+          <span class="rm-icon" aria-hidden="true">◓</span>
+          <div>
+            <h4>FlashAttention-tarzı fused softmax</h4>
+            <p class="muted">Uzun context (4K+ seq) için memory-efficient attention.</p>
+          </div>
+        </li>
+        <li class="roadmap-item">
+          <span class="rm-icon" aria-hidden="true">◔</span>
+          <div>
+            <h4>BPE tokenizer entegrasyonu</h4>
+            <p class="muted">Char-level yerine — daha kısa context, daha iyi semantik.</p>
+          </div>
+        </li>
+        <li class="roadmap-item">
+          <span class="rm-icon" aria-hidden="true">◕</span>
+          <div>
+            <h4>LoRA fine-tuning</h4>
+            <p class="muted">Düşük-rank adapter'larla az VRAM'da büyük model fine-tune.</p>
+          </div>
+        </li>
+        <li class="roadmap-item">
+          <span class="rm-icon" aria-hidden="true">●</span>
+          <div>
+            <h4>Açık ağırlık loader</h4>
+            <p class="muted">Qwen, Llama ve Mistral checkpoint'lerini doğrudan yükle.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD / FAQ -->
+  <section id="download" class="section">
+    <div class="container">
+      <div class="cta-card reveal">
+        <div class="cta-text">
+          <span class="kicker">Şimdi başla</span>
+          <h2>Tek <code>.exe</code>. Sıfır kurulum.</h2>
+          <p class="lead">
+            Windows için derlenmiş binary'i indir, corpus'unu hazırla, çift tıkla.
+            Ya da kaynaktan derle — tüm CUDA mimarileri destekleniyor.
+          </p>
+          <div class="cta-buttons">
+            <a class="btn btn-primary" href="../gpt_cuda.exe" download>
+              gpt_cuda.exe · 537 KB
+            </a>
+            <a class="btn btn-outline" href="../README.md">
+              README.md
+            </a>
+          </div>
+        </div>
+        <div class="cta-side">
+          <div class="spec">
+            <span class="spec-label">Lisans</span>
+            <span class="spec-val">MIT</span>
+          </div>
+          <div class="spec">
+            <span class="spec-label">Diller</span>
+            <span class="spec-val">C++20 · CUDA</span>
+          </div>
+          <div class="spec">
+            <span class="spec-label">Bağımlılık</span>
+            <span class="spec-val">cuBLAS</span>
+          </div>
+          <div class="spec">
+            <span class="spec-label">Platform</span>
+            <span class="spec-val">Windows · Linux</span>
+          </div>
+          <div class="spec">
+            <span class="spec-label">Hedef</span>
+            <span class="spec-val">RTX 20xx → 50xx</span>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="faq-title reveal">Sıkça sorulanlar</h2>
+      <div class="faq reveal">
+        <details>
+          <summary>Neden PyTorch yok?</summary>
+          <p>
+            Transformer matematiğini ve CUDA kernel'larını soyutlamadan görmek için.
+            Aynı zamanda bağımlılık zinciri sıfır — tek <code>.exe</code>, taşınabilir,
+            embedded sistemlere uygun.
+          </p>
+        </details>
+        <details>
+          <summary>Hangi ekran kartı gerekli?</summary>
+          <p>
+            CUDA destekli herhangi bir NVIDIA GPU — <code>sm_75</code> ve üstü.
+            Tiny preset 4 GB VRAM'lı bir kartta bile çalışır; XL preset için 16 GB önerilir.
+          </p>
+        </details>
+        <details>
+          <summary>ChatGPT yerine kullanabilir miyim?</summary>
+          <p>
+            Hayır — ve bu zaten amacı değil. XasmAI <em>kendi domain'inde</em> küçük,
+            hızlı, lokal çalışan bir model eğitmek için tasarlandı. ERP log analizi,
+            kod tamamlama, yapısal metin üretimi gibi dar görevlerde mükemmeldir.
+          </p>
+        </details>
+        <details>
+          <summary>Eğitim ne kadar sürer?</summary>
+          <p>
+            Corpus boyutuna ve preset'e bağlı. Tiny + 1MB metin → birkaç dakika.
+            Medium + 100MB metin → birkaç saat. Eğitim sırasında SIGINT (Ctrl+C)
+            ile güvenle durdurabilir, sonra <code>--resume</code> ile devam edebilirsin.
+          </p>
+        </details>
+        <details>
+          <summary>Linux'ta çalışır mı?</summary>
+          <p>
+            Evet. <code>make gpt_cuda CUDA_ARCH=sm_XX</code> ile derle —
+            Makefile cross-platform.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="brand-mark">⌬</span>
+      <span class="brand-name">Xasm<span class="accent">AI</span></span>
+      <p class="muted small">Sıfırdan CUDA GPT eğitim motoru.</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h5>Proje</h5>
+        <a href="#features">Özellikler</a>
+        <a href="#architecture">Mimari</a>
+        <a href="#models">Modeller</a>
+        <a href="#roadmap">Yol haritası</a>
+      </div>
+      <div>
+        <h5>Kaynaklar</h5>
+        <a href="../README.md">README</a>
+        <a href="../Makefile">Makefile</a>
+        <a href="../examples/">Örnekler</a>
+        <a href="../include/">Header'lar</a>
+      </div>
+      <div>
+        <h5>Lisans</h5>
+        <span class="muted small">MIT License</span>
+        <span class="muted small">© 2026 XasmAI</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
